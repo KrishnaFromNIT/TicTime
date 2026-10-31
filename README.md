@@ -50,3 +50,32 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md). Pick an issue labelled `documentation`,
 ## License
 
 [MIT](LICENSE)
+## Troubleshooting
+
+### 1. Changes not reflecting after modifying files
+If your CSS or JS changes are not appearing on the page, the browser might be caching old assets. Perform a hard refresh:
+- **Windows / Linux:** `Ctrl` + `F5` or `Ctrl` + `Shift` + `R`
+- **Mac:** `Cmd` + `Shift` + `R`
+
+### 2. Fonts or assets look different or fail to load when opening `file://` directly
+Opening `index.html` directly using the `file://` protocol can cause CORS or Google Fonts loading issues in some browsers. Use a local development server (e.g., Live Server extension in VS Code, or `npx serve`) to open the app via `http://localhost`.
+
+### 3. Game functionality not responding / blank page on click
+Check the browser developer console for any uncaught errors:
+- Press `F12` or `Ctrl` + `Shift` + `I` (or `Cmd` + `Option` + `I` on Mac) and select the **Console** tab to identify potential script errors or missing file imports.
+
+### 4. Custom theme resets on page refresh
+Ensure `localStorage` is enabled in your browser privacy settings. The game uses browser storage to persist your preferred light/dark theme state.
+
+---
+
+## FAQ
+
+### Q1: Who plays first in a new game?
+Player **X** always makes the first move at the start of a new match.
+
+### Q2: How are draws counted?
+If all 9 cells are filled without either player aligning 3 matching marks horizontally, vertically, or diagonally, the game registers a draw and increments the draw counter.
+
+### Q3: Does the game save my score if I refresh the page?
+Scores reset to 0 when the page is reloaded. Only your chosen color theme (light or dark mode) is saved across browser sessions.

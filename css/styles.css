@@ -47,23 +47,37 @@ h1 { margin: 0; font-size: 2.1rem; font-weight: 800; letter-spacing: -.03em; bac
 
 /* ---------- Scoreboard ---------- */
 .scoreboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
-.score-card { background: #ffffff; border-radius: 18px; padding: 12px 8px; text-align: center; border-bottom: 4px solid #c7c3e0; box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+
+/* ISSUE #11 FIX: Changed background from #ffffff to var(--card-bg) and added color: var(--text) */
+.score-card { background: var(--card-bg); border-radius: 18px; padding: 12px 8px; text-align: center; border-bottom: 4px solid #c7c3e0; box-shadow: 0 6px 16px rgba(0,0,0,.06); color: var(--text); }
 .score-card.x { border-color: var(--x); }
 .score-card.o { border-color: var(--o); }
 .score-label { display: block; font-size: .75rem; color: var(--muted); }
 .score-value { display: block; font-size: 1.9rem; font-weight: 800; color: var(--text); }
 
 /* ---------- Status pill ---------- */
-.status { display: flex; align-items: center; justify-content: center; gap: 10px; width: fit-content; margin: 0 auto 20px; padding: 9px 20px; border-radius: 999px; background: #ffffff; color: #1e1b4b; font-weight: 600; font-size: .95rem; box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+
+/* ISSUE #11 FIX: Changed background from #ffffff to var(--card-bg) and color from #1e1b4b to var(--text) */
+.status { display: flex; align-items: center; justify-content: center; gap: 10px; width: fit-content; margin: 0 auto 20px; padding: 9px 20px; border-radius: 999px; background: var(--card-bg); color: var(--text); font-weight: 600; font-size: .95rem; box-shadow: 0 6px 16px rgba(0,0,0,.08); }
 .dot { width: 11px; height: 11px; border-radius: 50%; background: #a09cc0; }
 .status[data-player="X"] .dot { background: var(--x); box-shadow: 0 0 10px var(--x); }
 .status[data-player="O"] .dot { background: var(--o); box-shadow: 0 0 10px var(--o); }
 
 /* ---------- Board ---------- */
 .board { display: grid; grid-template-columns: repeat(3, 130px); gap: 12px; width: 414px; margin: 0 auto 22px; }
-.cell { height: 130px; background: #ffffff; border-radius: 22px; display: grid; place-items: center; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,.08); transition: transform .15s, background .2s; }
+
+/* ISSUE #11 FIX: Changed background from #ffffff to var(--cell-bg) */
+.cell { height: 130px; background: var(--cell-bg); border-radius: 22px; display: grid; place-items: center; cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,.08); transition: transform .15s, background .2s; }
 .cell:empty:hover { transform: translateY(-3px); background-color: var(--cell-hover); }
 .board.is-over .cell { cursor: default; }
+
+/* ---------- ISSUE #19 FIX START: Accessible focus ring for cells ---------- */
+.cell:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+/* ---------- ISSUE #19 FIX END ---------- */
+
 /* faint preview of the mark you are about to place */
 .board[data-turn="X"]:not(.is-over) .cell:empty:hover { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23ff5f6d' stroke-opacity='.3' stroke-width='9' stroke-linecap='round'%3E%3Cpath d='M26 26L74 74M74 26L26 74'/%3E%3C/svg%3E"); background-size: 70%; background-repeat: no-repeat; background-position: center; }
 .board[data-turn="O"]:not(.is-over) .cell:empty:hover { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%2336a2e0' stroke-opacity='.3' stroke-width='9'%3E%3Ccircle cx='50' cy='50' r='26'/%3E%3C/svg%3E"); background-size: 70%; background-repeat: no-repeat; background-position: center; }
@@ -94,6 +108,42 @@ select { font: inherit; padding: 6px 10px; border-radius: 10px; border: 1px soli
 .footer { max-width: 1000px; margin: 30px auto 0; text-align: center; color: var(--muted); font-size: .85rem; }
 .confetti { position: fixed; top: -12px; width: 9px; height: 14px; border-radius: 2px; z-index: 10; pointer-events: none; animation: fall 1.9s ease-in forwards; }
 @keyframes fall { to { transform: translate(var(--drift), 105vh) rotate(720deg); opacity: .8; } }
+
+/* ISSUE #14 FIX: Footer Styling */
+.footer {
+  width: 100%;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  background-color: var(--bg-secondary, #f4f4f5);
+  color: var(--text-primary, #18181b);
+  border-top: 1px solid var(--border-color, #e4e4e7);
+  font-size: 0.9rem;
+}
+
+/* Light / Dark Mode support for footer */
+@media (prefers-color-scheme: dark) {
+  .footer {
+    background-color: var(--bg-secondary, #18181b);
+    color: var(--text-primary, #f5f3ff);
+    border-top-color: var(--border-color, #27272a);
+  }
+}
+
+.footer a {
+  color: var(--link-color, #2563eb);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .bonus-tag {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.5rem;
+}
 
 @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } .mark path, .mark circle { stroke-dashoffset: 0; } }

@@ -17,6 +17,24 @@ function buildBoard(onCellClick) {
     const cell = document.createElement('div');
     cell.className = 'cell';
     cell.dataset.index = i;
+    
+    /* ---------- ISSUE #19 FIX START: Accessibility attributes & Keyboard Nav ---------- */
+    cell.setAttribute('role', 'button');
+    cell.setAttribute('tabindex', '0');
+    const row = Math.floor(i / 3) + 1;
+    const col = (i % 3) + 1;
+    cell.setAttribute('aria-label', `Row ${row}, column ${col}, empty`);
+
+    cell.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onCellClick(i);
+      } else {
+        handleBoardKeyboardNav(e, i);
+      }
+    });
+    /* ---------- ISSUE #19 FIX END ---------- */
+
     cell.addEventListener('click', () => onCellClick(i));
     boardEl.appendChild(cell);
     cellEls.push(cell);
@@ -30,19 +48,60 @@ function renderBoard(board) {
     cell.dataset.mark = value || '';
     cell.className = 'cell' + (value ? ' filled ' + value.toLowerCase() : '');
     cell.innerHTML = value ? MARKS[value] : '';
+
+    /* ---------- ISSUE #19 FIX START: Accessible label updates ---------- */
+    const row = Math.floor(i / 3) + 1;
+    const col = (i % 3) + 1;
+    if (value === 'X') {
+      cell.setAttribute('aria-label', `Row ${row}, column ${col}, X`);
+    } else if (value === 'O') {
+      cell.setAttribute('aria-label', `Row ${row}, column ${col}, O`);
+    } else {
+      cell.setAttribute('aria-label', `Row ${row}, column ${col}, empty`);
+    }
+    /* ---------- ISSUE #19 FIX END ---------- */
   });
 }
 
-function highlightWinningCells(line) {
-  for (let i = 0; i < line.length - 1; i++) {
-    cellEls[line[i]].classList.add('win');
+/* ---------- ISSUE #19 FIX START: Arrow key navigation handler ---------- */
+function handleBoardKeyboardNav(e, currentIndex) {
+  let targetIndex = null;
+  if (e.key === 'ArrowRight') targetIndex = (currentIndex + 1) % 9;
+  if (e.key === 'ArrowLeft') targetIndex = (currentIndex - 1 + 9) % 9;
+  if (e.key === 'ArrowDown') targetIndex = (currentIndex + 3) % 9;
+  if (e.key === 'ArrowUp') targetIndex = (currentIndex - 3 + 9) % 9;
+
+  if (targetIndex !== null) {
+    e.preventDefault();
+    if (cellEls[targetIndex]) cellEls[targetIndex].focus();
   }
 }
+/* ---------- ISSUE #19 FIX END ---------- */
+
+/* ---------- ISSUE #5 FIX START ---------- */
+function highlightWinningCells(line) {
+  if (!line || !Array.isArray(line)) return;
+
+  // Select all cell elements on the board
+  const cells = document.querySelectorAll('.cell');
+
+  // Loop through all indices in the winning line array to apply the highlight
+  line.forEach(index => {
+    if (cells[index]) {
+      cells[index].classList.add('win');
+    }
+  });
+}
+/* ---------- ISSUE #5 FIX END ---------- */
 
 function setStatus(text, player) {
   statusTextEl.textContent = text;
   statusEl.dataset.player = player || '';
   boardEl.dataset.turn = player || '';
+  
+  /* ---------- ISSUE #19 FIX START: Screen reader live announcement ---------- */
+  statusEl.setAttribute('aria-live', 'polite');
+  /* ---------- ISSUE #19 FIX END ---------- */
 }
 
 function setBoardLocked(locked) {
@@ -74,3 +133,5 @@ function launchConfetti() {
     setTimeout(() => piece.remove(), 2400);
   }
 }
+// Automatically update the copyright year in the footer
+document.getElementById('year').textContent = new Date().getFullYear();
